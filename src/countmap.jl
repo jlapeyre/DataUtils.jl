@@ -1,7 +1,3 @@
-## Unlike `StatsBase.countmap`, `DataUtils.countmap`
-## accepts an iterator `iter` that may generate more values than can
-## be stored in memory.
-
 """
     countmap(iter; datatype=Any, dicttype=Dict)
 
