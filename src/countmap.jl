@@ -16,6 +16,25 @@ be stored in memory.
 
 `DataUtils.countmap` does not implement a fast, radix sort
 as `StatsBase.countmap` does.
+
+# Example
+```julia
+julia> import StatsBase; import DataUtils;
+
+julia> d = Dict(rand(1:1000) => rand(1:5) for i in 1:100);
+
+julia> StatsBase.countmap(values(d))
+ERROR: MethodError: no method matching countmap(::Base.ValueIterator{Dict{Int64,Int64}})
+...
+
+julia> DataUtils.countmap(values(d))
+Dict{Any,Int64} with 5 entries:
+  4 => 19
+  2 => 21
+  3 => 20
+  5 => 11
+  1 => 25
+```
 """
 function countmap(iter; datatype=Any, dicttype=Dict)
     return countmap!(dicttype{datatype,Int}(), iter)

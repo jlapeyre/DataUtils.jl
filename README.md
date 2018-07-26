@@ -1,6 +1,6 @@
 # DataUtils
 
-*Utilities for data structures*
+*Useful utilities and tools*
 
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://jlapeyre.github.io/DataUtils.jl/latest)
 Linux, OSX: [![Build Status](https://travis-ci.org/jlapeyre/DataUtils.jl.svg?branch=master)](https://travis-ci.org/jlapeyre/DataUtils.jl)
