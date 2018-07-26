@@ -1,0 +1,9 @@
+name = "DataUtils"
+desc = "utilities for data structures"
+authors = ["John Lapeyre"]
+license = "MIT"
+version = "0.1.0"
+uuid = "3070b4c8-8f86-11e8-0951-c77c74792e5c"
+
+[deps]
+# DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
