@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>DataUtils · DataUtils.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataUtils.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href="index.html">DataUtils</a><ul class="internal"><li><a class="toctext" href="#Contents-1">Contents</a></li><li><a class="toctext" href="#Index-1">Index</a></li><li><a class="toctext" href="#Functions-1">Functions</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href="index.html">DataUtils</a></li></ul><a class="edit-page" href="https://github.com/jlapeyre/DataUtils.jl/blob/master/docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>DataUtils</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="DataUtils-1" href="#DataUtils-1">DataUtils</a></h1><p><em>Useful utilities and tools</em></p><p>The source repository is <a href="https://github.com/jlapeyre/DataUtils.jl">https://github.com/jlapeyre/DataUtils.jl</a>.</p><p>No names are exported.</p><p>If some of this code duplicates functionality available elsewhere, or if it would find a good home in a well-supported package, please open an issue at the github repository.</p><h2><a class="nav-anchor" id="Contents-1" href="#Contents-1">Contents</a></h2><ul><li><a href="index.html#DataUtils-1">DataUtils</a></li><ul><li><a href="index.html#Contents-1">Contents</a></li><li><a href="index.html#Index-1">Index</a></li><li><a href="index.html#Functions-1">Functions</a></li></ul></ul><h2><a class="nav-anchor" id="Index-1" href="#Index-1">Index</a></h2><ul><li><a href="index.html#DataUtils.countmap"><code>DataUtils.countmap</code></a></li><li><a href="index.html#DataUtils.writecopyconstructor"><code>DataUtils.writecopyconstructor</code></a></li></ul><h2><a class="nav-anchor" id="Functions-1" href="#Functions-1">Functions</a></h2><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataUtils.countmap" href="#DataUtils.countmap"><code>DataUtils.countmap</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">countmap(iter; datatype=Any, dicttype=Dict)</code></pre><p>Return an <code>AbstractDict</code> counting the number of occurences of elements in <code>iter</code>.</p><p>Unlike <code>StatsBase.countmap</code>, <code>DataUtils.countmap</code> does not require that one first calls <code>collect</code> on <code>iter</code> if <code>iter</code> is not an <code>AbstractArray</code>. <code>DataUtils.countmap</code> accepts any iterator, including one that may generate more values than can be stored in memory.</p><p><code>DataUtils.countmap</code> does not implement a fast, radix sort as <code>StatsBase.countmap</code> does.</p><p><strong>Example</strong></p><pre><code class="language-julia">julia&gt; import StatsBase; import DataUtils;
+
+julia&gt; d = Dict(rand(1:1000) =&gt; rand(1:5) for i in 1:100);
+
+julia&gt; StatsBase.countmap(values(d))
+ERROR: MethodError: no method matching countmap(::Base.ValueIterator{Dict{Int64,Int64}})
+...
+
+julia&gt; DataUtils.countmap(values(d))
+Dict{Any,Int64} with 5 entries:
+  4 =&gt; 19
+  2 =&gt; 21
+  3 =&gt; 20
+  5 =&gt; 11
+  1 =&gt; 25</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/jlapeyre/DataUtils.jl/blob/b18152e8771630598e8505ed95ab4e112a845fe9/src/countmap.jl#L1-L34">source</a><div><div><pre><code class="language-none">countmap(iter::AbstractArray{T}; dicttype=Dict) where {T}</code></pre><p>Equivalent to calling <code>countmap(iter; datatype=Any, dicttype=Dict)</code>, with <code>datatype=T</code>.</p></div></div><a class="source-link" target="_blank" href="https://github.com/jlapeyre/DataUtils.jl/blob/b18152e8771630598e8505ed95ab4e112a845fe9/src/countmap.jl#L39-L44">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataUtils.writecopyconstructor" href="#DataUtils.writecopyconstructor"><code>DataUtils.writecopyconstructor</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">writecopyconstructor(mod, T; evaluate=true)</code></pre><p>Constructs and compiles a simple copy constructor for struct type <code>T</code>. Each field is copied if a corresponding method for <code>copy</code> exists, and is passed unaltered otherwise. The code creating the copy constructor is evaluated in module <code>mod</code>. If <code>evaluate</code> is false, the expression defining the copy method is returned and is not evaluted.</p><p>Note that the <code>copy</code> methods for the fields must exist at the time <code>writecopyconstructor</code> is called.</p><p><strong>Example</strong></p><pre><code class="language-julia">struct A
+ a::Int
+ b::String
+ c::Vector
+end
+
+julia&gt; DataUtils.writecopyconstructor(Main, A)
+
+julia&gt; x = A(1, &quot;hi&quot;, [1, 2])
+A(1, &quot;hi&quot;, [1, 2])
+
+julia&gt; y = copy(x)
+A(1, &quot;hi&quot;, [1, 2])
+
+julia&gt; x.c[1] = 7;
+
+julia&gt; x
+A(1, &quot;hi&quot;, [7, 2])
+
+julia&gt; y
+A(1, &quot;hi&quot;, [1, 2])</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/jlapeyre/DataUtils.jl/blob/b18152e8771630598e8505ed95ab4e112a845fe9/src/functionutils.jl#L1-L37">source</a></section><footer><hr/></footer></article></body></html>
