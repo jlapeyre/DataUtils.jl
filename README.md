@@ -1,5 +1,7 @@
 # DataUtils
 
+# Obsolete, Archived.
+
 *Useful utilities and tools*
 
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://jlapeyre.github.io/DataUtils.jl/latest)
